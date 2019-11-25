@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--Mybatis 中面向接口方式的编程，mapper声明文件必须与接口一致,也就是IStudents.xml和IStudents.java名字一样-->
+
+<mapper namespace="com.mapper.IStudents">
+    <!--动态SQL-->
+
+    <select id="selectByName_Class" resultType="com.pojo.Students">
+        <!--默认情况下，按照的下标寻找-->
+        select * from students where stuname=#{0} or stuclass=#{1}
+    </select>
+
+    <resultMap id="stu-tes" type="com.pojo.Students">
+        <id column="id" property="id"/>
+        <result column="tid" property="tid"/>
+        <result column="stuname" property="stuname"/>
+        <result column="stuclass" property="stuclass"/>
+        <association property="teacher" javaType="com.pojo.Teacher">
+            <id column="id" property="id"/>
+            <result column="teaname" property="teaname"/>
+            <result column="teaclass" property="teaclass"/>
+        </association>
+    </resultMap>
+    <select id="seletcStu_Tea" resultMap="stu-tes">
+        SELECT stu.id,stu.tid,stu.stuname,stu.stuclass,tea.teaname
+            FROM students stu left join teacher tea on stu.tid=tea.id
+    </select>
+
+    <resultMap id="stu-sc" type="com.pojo.Students">
+        <id column="id" property="id"/>
+        <result column="tid" property="tid"/>
+        <result column="stuname" property="stuname"/>
+        <result column="stuclass" property="stuclass"/>
+        <association property="score" column="id" select="com.mapper.IScore.selectScoreById"></association>
+    </resultMap>
+    <select id="seletc_stu_score" resultMap="stu-sc">
+            select * from students;
+    </select>
+</mapper>
